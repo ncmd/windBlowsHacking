@@ -1,2 +1,2 @@
-# windBlowsHacking
-for fun
+# Windows Scripts
+For fun

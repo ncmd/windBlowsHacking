@@ -47,7 +47,7 @@ reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325
 setlocal EnableDelayedExpansion
 
 :: Getting random line in file to make PC name
-set "INPUT_FILE=C:\Users\PK\Desktop\LISTPC.txt"
+set "INPUT_FILE=C:\Users\USERNAME\Desktop\LISTPC.txt"
 
 :: # Count the number of lines in the text file and generate a random number
 for /f "usebackq" %%a in (`find /V /C "" ^< %INPUT_FILE%`) do set lines=%%a

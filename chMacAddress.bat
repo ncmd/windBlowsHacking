@@ -43,3 +43,9 @@ netsh interface set interface "Local Area Connection" DISABLED
 :: Waiting 3 seconds before enabling interface
 timeout /t 3
 netsh interface set interface "Local Area Connection" ENABLED
+
+@echo off
+timeout /t 3
+ipconfig/release
+timeout /t 3
+ipconfig/renew

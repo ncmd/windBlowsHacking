@@ -1,7 +1,3 @@
-:: In order to make this program in background use backgroundBatch.vbs
-@echo off
-timeout /t 3
-ipconfig/release
 
 @Echo Off
 Setlocal EnableDelayedExpansion
@@ -14,6 +10,7 @@ Set _Str=%_Alphanumeric1%9876543210
 Set _Str=%_Alphanumeric2%9876543210
 Set _Str=%_Alphanumeric3%9876543210
 Set _Str=%_Alphanumeric4%9876543210
+
 :_LenLoop
 IF NOT "%_Str:~18%"=="" SET _Str=%_Str:~9%& SET /A _Len+=9& GOTO :_LenLoop
 SET _tmp=%_Str:~9,1%
@@ -28,10 +25,37 @@ SET _RndAlphaNum1=!_RndAlphaNum1!!_Alphanumeric1:~%_RND%,1!
 SET _RndAlphaNum2=!_RndAlphaNum2!!_Alphanumeric2:~%_RND%,1!
 SET _RndAlphaNum3=!_RndAlphaNum3!!_Alphanumeric3:~%_RND%,1!
 SET _RndAlphaNum4=!_RndAlphaNum4!!_Alphanumeric4:~%_RND%,1!
+
 If !_count! lss %_RNDLength% goto _loop
 :: Batch registry command to edit registry
 reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002BE10318}\0007 /v NetworkAddress /T REG_SZ /d "!_RndAlphaNum1!!_RndAlphaNum2!!_RndAlphaNum3!!_RndAlphaNum4!" /f
+@echo off
 
+@echo off
+setlocal EnableDelayedExpansion
+set "INPUT_FILE=C:\Users\PK\Desktop\LISTPC.txt"
+
+:: # Count the number of lines in the text file and generate a random number
+for /f "usebackq" %%a in (`find /V /C "" ^< %INPUT_FILE%`) do set lines=%%a
+set /a randnum=%RANDOM% * lines / 32768 + 1, skiplines=randnum-1
+
+:: # Extract the line from the file
+set skip=
+if %skiplines% gtr 0 set skip=skip=%skiplines%
+for /f "usebackq %skip% delims=" %%a in (%INPUT_FILE%) do set "newPCNAME=%%a" & goto continue
+:continue
+
+::echo Line #%randnum% is:
+::echo/!newPCNAME!
+
+REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName /v ComputerName /t REG_SZ /d !newPCNAME! /f
+@echo off
+timeout /t 3
+netsh int ip set address "local area connection" dhcp
+netsh int ip set address "local area connection" static %staticIP% %subnetmask%
+netsh int ip set address "local area connection" dhcp
+ipconfig/release
+ipconfig/renew
 :: Directory= HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002BE10318}\0007
 :: Network Adapter Interface = 0007 (Look at DriverDesc key to identify the interface. Ex. Intel(R) 82579LM Gigabit Network Connection)
 :: Key to Edit=  NetworkAddress
@@ -47,6 +71,4 @@ netsh interface set interface "Local Area Connection" DISABLED
 timeout /t 3
 netsh interface set interface "Local Area Connection" ENABLED
 
-
-timeout /t 3
-ipconfig/renew
+netsh int ip set address "local area connection" static %staticIP% %subnetmask%

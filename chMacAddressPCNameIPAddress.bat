@@ -1,3 +1,10 @@
+:: This batch script changes the Mac Address, PC Name, and IP address of Windows 7 System
+:: How: makes changes to registry and uses a file with a list of names with the extension '-PC'
+:: Created by Charles M. Chong
+:: references:
+:: http://stackoverflow.com/questions/13343144/random-line-of-text-ussing-batch
+:: http://www.opal-rt.com/KMP/index.php?/article/AA-00459/0/Useful-Batch-scripts-for-setting-and-checking-IP-address-of-HOST-PC.html
+:: http://geekytweaks.blogspot.com.au/2009/05/change-pc-name-through-batch-script.html
 
 @Echo Off
 Setlocal EnableDelayedExpansion
@@ -30,9 +37,16 @@ If !_count! lss %_RNDLength% goto _loop
 :: Batch registry command to edit registry
 reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002BE10318}\0007 /v NetworkAddress /T REG_SZ /d "!_RndAlphaNum1!!_RndAlphaNum2!!_RndAlphaNum3!!_RndAlphaNum4!" /f
 @echo off
+:: Directory= HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002BE10318}\0007
+:: Network Adapter Interface = 0007 (Look at DriverDesc key to identify the interface. Ex. Intel(R) 82579LM Gigabit Network Connection)
+:: Key to Edit=  NetworkAddress
+:: Type of Key = REG_SZ
+:: Modified Value = "!_RndAlphaNum1!!_RndAlphaNum2!!_RndAlphaNum3!!_RndAlphaNum4!"
 
 @echo off
 setlocal EnableDelayedExpansion
+
+:: Getting random line in file to make PC name
 set "INPUT_FILE=C:\Users\PK\Desktop\LISTPC.txt"
 
 :: # Count the number of lines in the text file and generate a random number
@@ -45,9 +59,6 @@ if %skiplines% gtr 0 set skip=skip=%skiplines%
 for /f "usebackq %skip% delims=" %%a in (%INPUT_FILE%) do set "newPCNAME=%%a" & goto continue
 :continue
 
-::echo Line #%randnum% is:
-::echo/!newPCNAME!
-
 REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName /v ComputerName /t REG_SZ /d !newPCNAME! /f
 @echo off
 timeout /t 3
@@ -56,11 +67,6 @@ netsh int ip set address "local area connection" static %staticIP% %subnetmask%
 netsh int ip set address "local area connection" dhcp
 ipconfig/release
 ipconfig/renew
-:: Directory= HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002BE10318}\0007
-:: Network Adapter Interface = 0007 (Look at DriverDesc key to identify the interface. Ex. Intel(R) 82579LM Gigabit Network Connection)
-:: Key to Edit=  NetworkAddress
-:: Type of Key = REG_SZ
-:: Modified Value = "%RND2%%RND3%%RND4%%RND1%"
 
 :: Restart interface to make changes
 @echo off

@@ -1,4 +1,7 @@
 :: In order to make this program in background use backgroundBatch.vbs
+@echo off
+timeout /t 3
+ipconfig/release
 
 @Echo Off
 Setlocal EnableDelayedExpansion
@@ -44,8 +47,6 @@ netsh interface set interface "Local Area Connection" DISABLED
 timeout /t 3
 netsh interface set interface "Local Area Connection" ENABLED
 
-@echo off
-timeout /t 3
-ipconfig/release
+
 timeout /t 3
 ipconfig/renew

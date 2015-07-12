@@ -47,7 +47,7 @@ reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325
 setlocal EnableDelayedExpansion
 
 :: Getting random line in file to make PC name
-set "INPUT_FILE=C:\Users\USERNAME\Desktop\LISTPC.txt"
+set "INPUT_FILE=C:\Scripts\LISTPC.txt"
 
 :: # Count the number of lines in the text file and generate a random number
 for /f "usebackq" %%a in (`find /V /C "" ^< %INPUT_FILE%`) do set lines=%%a
@@ -59,7 +59,8 @@ if %skiplines% gtr 0 set skip=skip=%skiplines%
 for /f "usebackq %skip% delims=" %%a in (%INPUT_FILE%) do set "newPCNAME=%%a" & goto continue
 :continue
 
-REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName /v ComputerName /t REG_SZ /d !newPCNAME! /f
+REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName /v ComputerName /t REG_SZ /d "%newPCNAME%" /f
+REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName /v ActiveComputerName /t REG_SZ /d "%newPCNAME%" /f
 @echo off
 timeout /t 3
 netsh int ip set address "local area connection" dhcp

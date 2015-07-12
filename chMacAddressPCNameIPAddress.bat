@@ -60,7 +60,7 @@ for /f "usebackq %skip% delims=" %%a in (%INPUT_FILE%) do set "newPCNAME=%%a" & 
 :continue
 
 REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName /v ComputerName /t REG_SZ /d "%newPCNAME%" /f
-REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName /v ActiveComputerName /t REG_SZ /d "%newPCNAME%" /f
+REG ADD HKLM\SYSTEM\CurrentControlSet\Control\ComputerName\ActiveComputerName /v ComputerName /t REG_SZ /d "%newPCNAME%" /f
 @echo off
 timeout /t 3
 netsh int ip set address "local area connection" dhcp
